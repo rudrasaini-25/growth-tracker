@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <section class="add-goal-button-container">
+        
+        <button type="button" class="add-goal-button" onclick = "window.location.href='/tracker/add_goals/'">ADD A GOAL</button>
+            
+    </section>
+
+    <section class="display-goals-container">
+
+        {% for goal in goals %} 
+            <div 
+                class="goal-card" 
+                data-id="{{ goal.id }}"
+                data-title="{{ goal.title }}" 
+                data-description="{{ goal.description }}"
+                data-target-hours="{{ goal.target_hours}}"
+                data-completed-hours="{{ goal.completed_hours }}"
+                data-status="{{ goal.status }}"
+                >
+                <p style="font-weight: bold; margin-bottom: 2%;">{{ goal.title }}</p>
+                <p>{{ goal.description }}</p>
+                <p>
+                    Status:
+                    <span id="goal-card-status-{{ goal.id }}">
+                        {{ goal.status }}
+                    </span>
+                </p>
+            </div>
+        {% endfor %}
+
+        <div id="goal-modal" style="display: none;">
+            <h1>GOAL DETAILS</h1>
+            <h2 id="goal-title"></h2>
+            <p id="goal-description"></p>
+            <p>
+                Target:
+                <span id="goal-target-hours"></span>
+                hours
+            </p>
+            <p>
+                Completed:
+                <span id="modal-completed-hours"></span> 
+                hours
+            </p>
+            <p>
+                Status:
+                <span id="goal-status"></span>
+            </p>
+
+            <label>Worked Today:</label>
+            <input
+                type="number"
+                id="goal-work-duration"
+                placeholder="minutes"
+            >
+            <button type="button" id="save-goal-time">
+                SAVE
+            </button>
+
+            <button id="close-modal">Close</button>
+        </div>
+
+    </section>
+
+    <script>
+
+    document.querySelectorAll('.goal-card').forEach(function(card){
+
+        card.addEventListener('click', function(){
+            
+            const title = this.dataset.title;
+            const description = this.dataset.description;
+            const targetHours = this.dataset.targetHours;
+            const completedHours = this.dataset.completedHours;
+            const goalId = this.dataset.id;
+
+            const modal = document.getElementById("goal-modal");
+            modal.dataset.goalId = goalId;
+
+            const status = this.dataset.status;
+
+            document.getElementById('goal-modal').style.display = 'block';
+            document.getElementById('goal-title').textContent = title;
+            document.getElementById('goal-description').textContent = description;
+            document.getElementById('goal-target-hours').textContent = targetHours;
+            document.getElementById('modal-completed-hours').textContent = completedHours;
+            document.getElementById("goal-status").textContent = status;
+
+        });
+    });
+
+    document.getElementById('close-modal')
+    .addEventListener('click', function(){
+
+        document.getElementById('goal-modal').style.display = 'none';
+
+    });
+
+
+    function getCookie(name) {
+
+        let cookieValue = null;
+
+        if (document.cookie && document.cookie !== '') {
+
+            const cookies = document.cookie.split(';');
+
+            for (let i = 0; i < cookies.length; i++) {
+
+                const cookie = cookies[i].trim();
+
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+
+                    cookieValue = decodeURIComponent(
+                        cookie.substring(name.length + 1)
+                    );
+
+                    break;
+                }
+            }
+        }
+
+        return cookieValue;
+    }
+    const csrfToken = getCookie('csrftoken');
+
+
+    document.getElementById('save-goal-time')
+    .addEventListener('click', function() {
+
+        const modal = document.getElementById('goal-modal');
+
+        const goalId = modal.dataset.goalId;
+
+        const workDuration = document.getElementById(
+            'goal-work-duration'
+        ).value;
+
+        const formData = new FormData();
+
+        formData.append('goal_id', goalId);
+        formData.append('work_duration', workDuration);
+
+        console.log("Goal ID:", goalId);
+        console.log("Work Duration:", workDuration);
+
+        fetch('{% url "goal_activity" %}', {
+
+            method: 'POST',
+
+            headers: {
+                'X-CSRFToken': csrfToken,
+            },
+
+            body: formData,
+
+        })
+        .then(response => response.json())
+
+        .then(data => {
+
+            console.log(data);
+
+            if (data.success) {
+
+                console.log("GOAL TIME SAVED");
+                document.getElementById("goal-work-duration").value = "";
+                document.getElementById("modal-completed-hours").textContent =
+                    data.completed_hours;
+                document.getElementById("goal-status").textContent = data.status;
+                document.getElementById("goal-card-status-" + goalId).textContent = data.status;
+
+            } else {
+
+                console.error(data.error);
+
+            }
+
+        })
+
+        .catch(error => {
+
+            console.error("Request failed:", error);
+
+        });
+
+    });
+
+    </script>
+
+{% endblock %}
+

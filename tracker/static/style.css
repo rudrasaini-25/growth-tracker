@@ -1,0 +1,351 @@
+ /* ==========================================================================
+   1. GLOBAL RESET & BACKDROP SETUP
+   ========================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 60%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    height: 100%;
+}
+
+body {
+    font-family: 'Helvetica', sans-serif;
+    min-height: 100%;
+    
+    /* Background Image Configurations */
+    background-image: url('bg-img.jpg'); 
+    background-repeat: no-repeat;                 
+    background-size: cover;                       
+    background-position: center;                  
+    background-attachment: fixed;                 
+}
+
+/* Base structural layout wrapper */
+.base {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   2. FIXED HEADER & NAVIGATION
+   ========================================================================== */
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 3rem 15%;
+    display: flex;
+    justify-content: center; /* Centers your navigation link block perfectly */
+    align-items: center;
+    z-index: 1000; /* Keeps navbar floating securely on top of everything */
+}
+
+.nevbar {
+    border-radius: 10px;
+    padding: 1rem 2rem;
+}
+
+.nevbar a {
+    font-size: 1.8rem;
+    color: white;
+    margin: 0 5rem; /* Balanced horizontal spacing instead of left-only */
+    text-decoration: none; /* Removes native link underline styling */
+    border-bottom: 3px solid transparent;
+}
+
+.nevbar a:hover {
+    border-bottom: 3px solid rgb(88, 22, 181);
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   3. FULL VIEWPORT SCREEN CONTROL (The Golden Fix)
+   ========================================================================== */
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    flex: 1; /* Automatically pushes footer down if pages are empty */
+    width: 100%;
+}
+
+/* Screen One: Pushes button to center of initial screen view */
+.add-habit-button-container,
+.add-goal-button-container {
+    width: 100%;
+    height: 100vh; /* Demands exactly 100% of available viewport vertical height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Button style block */
+.add-habit-button,
+.add-goal-button {
+    white-space: nowrap;
+    border: none;
+    border-radius: 50px;
+    background-color: rgb(88, 22, 181);
+    color: rgb(0, 0, 0);
+    padding: 15px 35px;
+    cursor: pointer;
+    font-size: 1.8rem;
+    font-weight: bold;
+    transition: 0.2s ease-in-out, transform 0.1s ease;
+    box-shadow: 0 0 15px rgb(88, 22, 181);
+}
+
+.add-habit-button:hover,
+.add-goal-button:hover {
+    color:rgb(88, 22, 181);
+    background-color: black;
+    transform: scale(1.2)translateY(-5px);
+    box-shadow: 0 0 25px rgb(88, 22, 181);
+}
+
+/* Screen Two: Safely aligned down under screen one */
+.display-habits-container,
+.display-goals-container { 
+    width: 100%;
+    min-height: 100vh; /* Gives your list a full view screen height to display items */
+    padding: 10rem 15% 4rem 15%; /* Generous top padding keeps content below fixed header */
+    background-color: rgba(27, 27, 27, 0.75); /* Dark layout overlay protection for tracking readability */
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        scale:0.8;
+    }
+    to {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+.display-habits,
+.goal-card{
+    animation: appear linear;
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+    color: white;
+    font-size: 1.6rem;
+    background-color: black;
+    border: 2px solid rgb(88, 22, 181);
+    border-radius: 10px;
+    padding: 2%;
+    margin: 5%;
+    box-shadow: 0 0 25px rgb(88, 22, 181);
+}
+
+/* ==========================================================================
+   4. FOOTER CONFIGURATION
+   ========================================================================== */
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    color: white;
+    padding: 2rem;
+    font-size: 1.2rem;
+}
+
+
+::-webkit-scrollbar{
+    width: 10px;
+}
+::-webkit-scrollbar-thumb{
+    background-color: rgb(88, 22, 181);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-track{
+    background-color: black;
+}
+
+
+
+/* ADD HABIT AND RECURRING HABIT PAGE */
+
+.tab-container {
+    display: flex;
+    margin-top: 10%;
+    gap: 5px;
+    margin-bottom: 5%;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 24px;
+    font-size: 2rem;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    bottom: -2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover{
+    color:  rgb(88, 22, 181);
+    background-color: transparent; /* Subtle light background on hover */
+   
+}
+
+.tab-button.active {
+    color: rgb(88, 22, 181) ;
+    background-color: black;
+    border-bottom: 2px solid rgb(88, 22, 181) ;
+    box-shadow: 0 0 25px rgb(88, 22, 181);
+    transition:1s;
+}
+
+
+
+#habit-form,
+#recurring-form, 
+#goal-form{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px; /* Adds clean spacing between fields */
+    column-gap: 60px;
+    margin: 0 auto;
+    padding: 20px;
+    width: 100%;
+    max-width: 80%;
+}
+form p {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 0;
+}
+form label {
+    font-size: medium;
+}
+
+.form-input::placeholder, 
+.form-textarea::placeholder,
+.form-select::placeholder,
+.form-date::placeholder {
+    font-size: medium;       /* Reduces placeholder text size so it sits comfortably inside */
+    font-weight: 400;         /* Makes the placeholder text thinner than typed text */
+    letter-spacing: 0.5px;    /* Adds subtle breathing room between letters */
+    opacity: 0.7;             /* Makes the text slightly transparent/soft */
+}
+
+/* Apply your core design styles to the new classes together */
+.form-input, 
+.form-textarea, 
+.form-select, 
+.form-date {
+    width: 100%;
+    padding: 18px 20px;
+    font-size: medium;
+    background-color: #1e1b29; /* Deep dark purple/black */
+    border: 2px solid rgba(88, 22, 181, 0.4);
+    border-radius: 8px;
+    color: white;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Unified focus state glow */
+.form-input:focus, 
+.form-textarea:focus, 
+.form-select:focus, 
+.form-date:focus {
+    border-color: rgb(88, 22, 181);
+    box-shadow: 0 0 10px rgba(88, 22, 181, 0.5);
+}
+
+/* 🔍 Dropdown Specific Rule */
+.form-select option {
+    background-color: #1e1b29; /* Ensures the pop-up options menu has a matching dark background */
+    color: white;
+}
+
+/* 🔍 Date Specific Rule */
+/* This targets the tiny built-in calendar icon picker inside modern browsers */
+.form-date::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Inverts the calendar icon color to white so it's readable on dark backgrounds */
+    cursor: pointer;
+}
+
+
+.save-habit-button,
+.save-recurring-habit-button,
+.save-goal-button{
+    grid-column: span 2;
+    padding: 15px;
+    background-color:  rgb(88, 22, 181);
+    color: black;
+    border: none;
+    border-radius: 10px;
+    font-size: medium;
+    font-weight: 600;
+    width: 50%;
+    box-shadow: 0 0 15px rgb(88, 22, 181);
+    margin-left: 25%;
+    margin-bottom: 10%;
+}
+.save-habit-button:hover,
+.save-recurring-habit-button:hover,
+.save-goal-button:hover{
+    color:rgb(88, 22, 181);
+    background-color: black;
+    transform: scale(1)translateY(-5px);
+    transition:0.5s;
+    box-shadow: 0 0 25px rgb(88, 22, 181);
+}
+
+.habit-time-checkbox-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.display-habits p{
+    display: flex;
+    align-items: center;
+    width: 60%;
+}
+
+.time-checkbox-container {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    width: 40%;
+}
+
+.completed {
+    opacity: 0.5;
+}
+
+.habit-checkbox,
+.recurring-habit-checkbox {
+    width: 20px;
+    height: 20px;
+    
+}
+.habit-checkbox:checked,
+.recurring-habit-checkbox:checked {
+    accent-color: rgb(88, 22, 181);
+}

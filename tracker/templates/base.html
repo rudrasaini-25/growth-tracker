@@ -1,0 +1,44 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>growth tracker</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    
+
+    <div class = "base">
+        <header>
+            <div class = "header">
+                <nav class = "nevbar">
+                    <a href="#home">Home</a>
+                    <a onclick = "window.location.href='/tracker/habits/'">Habit</a>
+                    <a onclick = "window.location.href='/tracker/goals/'">Goal</a>
+                    <a href="#journal">Journal</a>
+                </nav>
+            </div>
+        </header>
+        
+        
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <footer>
+            <div class = "footer">
+                <h1>this is a footer</h1>
+            </div>
+        </footer>
+        
+
+    </div>
+
+
+
+</body>
+</html>

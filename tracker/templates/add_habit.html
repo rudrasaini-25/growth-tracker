@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="tab-container">
+    <button type="button" class="tab-button active" id="tab-habit" onclick="showTab('habit', this)">Habit</button>
+    <button type="button" class="tab-button" id="tab-recurring" onclick="showTab('recurring', this)">Recurring Habit</button>
+</div>
+
+
+
+<div id="habit-form">
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ habit_form.as_p }}
+
+        <button type="submit"
+                name="form_type"
+                value="habit"
+                class="save-habit-button">
+            Save Habit
+        </button>
+
+    </form>
+
+</div>
+
+
+<div id="recurring-form" style="display:none;">
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ recurring_habit_form.as_p }}
+        
+        <button type="submit"
+                name="form_type"
+                value="recurring"
+                class="save-recurring-habit-button">
+            Save Recurring Habit
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+    function showTab(tab, clickedButton) {
+
+        if (tab === 'habit') {
+
+            document.getElementById('habit-form').style.display = 'block';
+            document.getElementById('recurring-form').style.display = 'none';
+
+        } else {
+
+            document.getElementById('habit-form').style.display = 'none';
+            document.getElementById('recurring-form').style.display = 'block';
+        }
+
+        const tabs = document.querySelectorAll('.tab-button');
+        tabs.forEach(button => button.classList.remove('active'));
+
+        clickedButton.classList.add('active');
+
+    }
+</script>
+
+
+{% endblock %}

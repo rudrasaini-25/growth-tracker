@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <section class="add-habit-button-container">
+        
+        <button type="button" class="add-habit-button" onclick = "window.location.href='/tracker/add_habits/'">ADD A HABIT</button>
+            
+    </section>
+    
+
+    <section class="display-habits-container">
+
+        <div >
+            {% for habit in habits %}
+            <div class="display-habits {% if habit.checked_today %}completed{% endif %}">
+                <div class="habit-time-checkbox-container">
+
+                    <div class="habit-display-container">
+                        <p style="font-weight: bold; margin-bottom: 2%;">{{ habit.title }}</p>
+                        <p>{{ habit.description }}</p>
+                    </div>
+                    <div class="time-checkbox-container">
+                        <input
+                            type="checkbox"
+                            class="habit-checkbox"
+                            id="habit-{{ habit.id }}"
+                            data-id="{{ habit.id }}"
+                            {% if habit.checked_today %}checked disabled{% endif %}
+                        >
+                        <input type="number"
+                            class="habit-time"
+                            name="habit-time" 
+                            id="habit-time-{{ habit.id }}"
+                            data-id="{{ habit.id }}"
+                            style="display:none; width: 80px; margin-left: 8px;"
+                            placeholder="minutes"
+                        >
+                    </div>    
+
+                    
+                </div>
+            
+            </div>
+            {% empty %}
+                <p>No habits yet.</p>
+            {% endfor %}
+            
+        </div>
+
+        <div >
+            {% for recurringhabit in recurringhabits %}
+            <div class="display-habits {% if recurringhabit.checked_today %}completed{% endif %}">
+
+                <div class="habit-time-checkbox-container">
+
+                    <div class="habit-display-container">
+                        <p style="font-weight: bold; margin-bottom: 2%;">{{ recurringhabit.title }}</p>
+                        <p>{{ recurringhabit.description }}</p>
+                    </div>
+                    <div class="time-checkbox-container">
+                        <input
+                            type="checkbox"
+                            class="recurring-habit-checkbox"
+                            id="recurring-habit-{{ recurringhabit.id }}"
+                            data-id="{{ recurringhabit.id }}"
+                            {% if recurringhabit.checked_today %}checked disabled{% endif %}
+                        >
+                        <input type="number"
+                            class="recurring-habit-time"
+                            name="recurring-habit-time" 
+                            id="recurring-habit-time-{{ recurringhabit.id }}"
+                            data-id="{{ recurringhabit.id }}"
+                            style="display:none; width: 80px; margin-left: 8px;"
+                            placeholder="minutes"
+                        >
+                    </div>    
+                </div>
+
+            </div>
+            
+            {% empty %}
+                <p style="display: flex; justify-content: center;">No recurring habits yet.</p>
+            {% endfor %}
+        </div>
+        
+    </section>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrfToken = getCookie('csrftoken');
+
+        function submitHabitTime(habitId, value, inputElement) {
+            if (!value) {
+                return;
+            }
+
+            const workDuration = parseInt(value, 10);
+            if (Number.isNaN(workDuration) || workDuration <= 0) {
+                inputElement.classList.add('input-error');
+                return;
+            }
+
+            inputElement.disabled = true;
+
+            const formData = new FormData();
+            formData.append('habit_id', habitId);
+            formData.append('work_duration', workDuration);
+
+            fetch('{% url "habits_activity" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken, 
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                console.log(data);
+
+                if (data.success) {
+
+                    console.log("SUCCESS");
+
+                    inputElement.classList.remove('input-error');
+                    inputElement.value = workDuration;
+                    inputElement.title = 'Saved';
+
+                    const checkbox = document.querySelector('#habit-' + habitId);
+
+                    console.log(checkbox);
+ 
+                    checkbox.checked = true;
+                    checkbox.disabled = true;
+
+                    inputElement.disabled = true;
+                    inputElement.style.display = 'none';
+
+                } else {
+                    inputElement.classList.add('input-error');
+                    console.error(data.error || 'Unable to save habit time');
+                }
+            })
+            .catch(error => {
+                inputElement.classList.add('input-error');
+                console.error('Request failed', error);
+            })
+            .finally(() => {
+                if (inputElement.title !== 'Saved') {
+                    inputElement.disabled = false;
+                }
+            });
+        }
+
+
+        document.querySelectorAll('.habit-checkbox').forEach(function(checkbox) {
+            checkbox.addEventListener('click', function() {
+                const habitId = this.dataset.id;
+                const timeInput = document.querySelector('#habit-time-' + habitId);
+                if (!timeInput) {
+                    return;
+                }
+                if (this.checked) {
+                    timeInput.style.display = 'block';
+                    timeInput.focus();
+                } else {
+                    timeInput.style.display = 'none';
+                }
+            });
+        });
+
+        document.querySelectorAll('.habit-time').forEach(function(input) {
+            input.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    submitHabitTime(this.dataset.id, this.value, this);
+                }
+            });
+
+        });
+
+
+
+        function submitRecurringHabitTime(recurringHabitId, value, inputElement) {
+            if (!value) {
+                return;
+            }
+
+            const workDuration = parseInt(value, 10);
+            if (Number.isNaN(workDuration) || workDuration <= 0) {
+                inputElement.classList.add('input-error');
+                return;
+            }
+
+            inputElement.disabled = true;
+
+            const formData = new FormData();
+            formData.append('recurring_habit_id', recurringHabitId);
+            formData.append('work_duration', workDuration);
+            
+
+            fetch('{% url "recurring_habits_activity" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken, 
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                console.log(data);
+
+                if (data.success) {
+
+                    console.log("SUCCESS");
+
+                    inputElement.classList.remove('input-error');
+                    inputElement.value = workDuration;
+                    inputElement.title = 'Saved';
+
+                    const checkbox = document.querySelector('#recurring-habit-' + recurringHabitId);
+
+                    console.log(checkbox);
+
+                    checkbox.checked = true;
+                    checkbox.disabled = true;
+
+                    inputElement.disabled = true;
+                    inputElement.style.display = 'none';
+
+                } else {
+                    inputElement.classList.add('input-error');
+                    console.error(data.error || 'Unable to save habit time');
+                }
+            })
+            .catch(error => {
+                inputElement.classList.add('input-error');
+                console.error('Request failed', error);
+            })
+            .finally(() => {
+                if (inputElement.title !== 'Saved') {
+                    inputElement.disabled = false;
+                }
+            });
+        }
+
+
+        document.querySelectorAll('.recurring-habit-checkbox').forEach(function(checkbox) {
+            checkbox.addEventListener('click', function() {
+                const recurringHabitId = this.dataset.id;
+                const timeInput = document.querySelector('#recurring-habit-time-' + recurringHabitId);
+                if (!timeInput) {
+                    return;
+                }
+                if (this.checked) {
+                    timeInput.style.display = 'block';
+                    timeInput.focus();  
+                } else {
+                    timeInput.style.display = 'none';
+                }
+            });
+        });
+
+        document.querySelectorAll('.recurring-habit-time').forEach(function(input) {
+            input.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    submitRecurringHabitTime(this.dataset.id, this.value, this);
+                }
+            });
+        });
+
+    });
+
+    </script>
+{% endblock %}
