@@ -18,6 +18,7 @@
                 data-target-hours="{{ goal.target_hours}}"
                 data-completed-hours="{{ goal.completed_hours }}"
                 data-status="{{ goal.status }}"
+                data-target-date="{{ goal.target_date }}"
                 >
                 <p style="font-weight: bold; margin-bottom: 2%;">{{ goal.title }}</p>
                 <p>{{ goal.description }}</p>
@@ -35,9 +36,13 @@
             <h2 id="goal-title"></h2>
             <p id="goal-description"></p>
             <p>
-                Target:
+                Target Hours:
                 <span id="goal-target-hours"></span>
                 hours
+            </p>
+            <p>
+                Deadline:
+                <span id="goal-target-date"></span>
             </p>
             <p>
                 Completed:
@@ -49,12 +54,27 @@
                 <span id="goal-status"></span>
             </p>
 
-            <label>Worked Today:</label>
+            <label id="worked-today-label">Worked Today:</label>
             <input
                 type="number"
                 id="goal-work-duration"
                 placeholder="minutes"
             >
+
+            <button id="extend-deadline" style="display:none;">
+                Extend Deadline
+            </button>
+
+            
+            <input
+                type="date"
+                id="new-deadline"
+                style="display: none;"
+            >
+            <button id="save-extended-deadline" style="display:none;">
+                Save Extended Deadline
+            </button>
+
             <button type="button" id="save-goal-time">
                 SAVE
             </button>
@@ -74,6 +94,8 @@
             const description = this.dataset.description;
             const targetHours = this.dataset.targetHours;
             const completedHours = this.dataset.completedHours;
+            const targetDate = this.dataset.targetDate;
+            document.getElementById("goal-target-date").textContent = targetDate;
             const goalId = this.dataset.id;
 
             const modal = document.getElementById("goal-modal");
@@ -88,8 +110,44 @@
             document.getElementById('modal-completed-hours').textContent = completedHours;
             document.getElementById("goal-status").textContent = status;
 
+            document.getElementById('new-deadline').style.display = 'none';
+            document.getElementById('save-extended-deadline').style.display = 'none';
+
+            if (status === "EXPIRED") {
+                document.getElementById("goal-work-duration").style.display = "none";
+                document.getElementById("save-goal-time").style.display = "none";
+                document.getElementById("worked-today-label").style.display = "none";
+
+                document.getElementById('extend-deadline').style.display = 'block';
+            }
+            else if (status === "ACTIVE") {
+
+                document.getElementById("goal-work-duration").style.display = "block";
+                document.getElementById("save-goal-time").style.display = "block";
+                document.getElementById("worked-today-label").style.display = "block";
+
+                document.getElementById("extend-deadline").style.display = "none";
+
+            }
+            else {
+                document.getElementById("goal-work-duration").style.display = "none";
+                document.getElementById("save-goal-time").style.display = "none";
+                document.getElementById("worked-today-label").style.display = "none";
+
+                document.getElementById('extend-deadline').style.display = 'none';
+            }
+
         });
     });
+
+    document.getElementById('extend-deadline')
+    .addEventListener('click',function(){
+
+        document.getElementById('extend-deadline').style.display = 'none';
+        document.getElementById('new-deadline').style.display = 'block';
+        document.getElementById('save-extended-deadline').style.display = 'block';
+
+    })
 
     document.getElementById('close-modal')
     .addEventListener('click', function(){
@@ -187,6 +245,80 @@
         });
 
     });
+
+
+    document.getElementById('save-extended-deadline') 
+    .addEventListener('click', function() { 
+
+        const modal = document.getElementById('goal-modal');
+
+        const goalId = modal.dataset.goalId; 
+
+        const newDeadline = document.getElementById( 'new-deadline' ).value;
+
+        const formData = new FormData(); 
+
+        formData.append('goal_id', goalId); 
+        formData.append('new_deadline', newDeadline); 
+
+        console.log("Goal ID:", goalId); 
+        console.log("New Deadline:", newDeadline);
+
+        fetch('{% url "extend_deadline" %}', { 
+
+            method: 'POST',
+
+            headers: {
+                'X-CSRFToken': csrfToken, 
+            },
+
+            body: formData, 
+        })
+        .then(response => response.json())
+
+        .then(data => {
+
+            console.log(data);
+
+            if (data.success) {
+                
+                const goalCard = document.querySelector(
+                    `.goal-card[data-id="${goalId}"]`
+                );
+
+
+                document.getElementById("new-deadline").value = "";
+
+                document.getElementById("goal-status").textContent = data.status;
+                document.getElementById("goal-card-status-" + goalId).textContent = data.status;
+                goalCard.dataset.status = data.status;
+
+                document.getElementById("goal-target-date").textContent = data.new_target_date; 
+                goalCard.dataset.targetDate = data.new_target_date;
+
+                document.getElementById("goal-work-duration").style.display = "block";
+                document.getElementById("save-goal-time").style.display = "block";
+                document.getElementById("worked-today-label").style.display = "block";
+
+                document.getElementById("extend-deadline").style.display = "none";
+                document.getElementById("new-deadline").style.display = "none";
+                document.getElementById("save-extended-deadline").style.display = "none";
+
+
+            }
+
+        })
+
+        .catch(error => {
+            console.error("Request failed:", error);
+        });
+
+    });
+
+
+
+
+
 
     </script>
 

@@ -5,6 +5,7 @@ from django.views.decorators.http import require_POST
 from .models import Habit, RecurringHabit, ActivityTimeCalculate, Goal
 from .forms import HabitForm, RecurringHabitForm, GoalForm
 from django.utils import timezone
+from datetime import date
 
 def habits(request):
 
@@ -306,7 +307,7 @@ def goal_activity(request):
     recurring_habit=None,
     created_by=request.user,
     updated_by=request.user,
-)
+    )
     
     timer.save()
 
@@ -332,3 +333,48 @@ def goal_activity(request):
         goal.status = "EXPIRED"
 
     return JsonResponse({'success': True, 'timer_id': timer.id, 'completed_hours': completed_hours, 'status': goal.status})
+
+
+
+
+@require_POST
+def extend_deadline(request):
+
+    if not request.user.is_authenticated: 
+        return JsonResponse({'error': 'Authentication required.'}, status=403) 
+    
+    goal_id = request.POST.get('goal_id') 
+    new_deadline = request.POST.get('new_deadline') 
+
+    if not goal_id or not new_deadline:
+            return JsonResponse({'error': 'Missing goal_id or new_deadline.'}, status=400)
+
+    goal = get_object_or_404(Goal, id=goal_id, user=request.user) #this gets the goal object so that i can use goal.save , goal.target_date etc.
+
+    new_deadline = date.fromisoformat(new_deadline)
+
+    goal.target_date = new_deadline
+    goal.save()
+	
+    total_minutes = 0
+    activities = ActivityTimeCalculate.objects.filter(
+        user=request.user,
+        goal=goal
+    )
+    
+    for activity in activities:
+        total_minutes += activity.work_duration
+    completed_hours = total_minutes / 60
+
+    today = timezone.localdate()
+	
+    if completed_hours >= goal.target_hours:
+            goal.status = "COMPLETED"
+
+    elif completed_hours < goal.target_hours and today <= goal.target_date:
+        goal.status = "ACTIVE"
+
+    else:
+        goal.status = "EXPIRED"
+
+    return JsonResponse({'success': True, 'status': goal.status, 'new_target_date': goal.target_date})
