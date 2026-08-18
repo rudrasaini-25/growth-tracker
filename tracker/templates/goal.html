@@ -20,8 +20,8 @@
                 data-status="{{ goal.status }}"
                 data-target-date="{{ goal.target_date }}"
                 >
-                <p style="font-weight: bold; margin-bottom: 2%;">{{ goal.title }}</p>
-                <p>{{ goal.description }}</p>
+                <p style="font-weight: bold">{{ goal.title }}</p>
+                <p style="margin-bottom: 2%">{{ goal.description }}</p>
                 <p>
                     Status:
                     <span id="goal-card-status-{{ goal.id }}">
@@ -31,55 +31,84 @@
             </div>
         {% endfor %}
 
-        <div id="goal-modal" style="display: none;">
-            <h1>GOAL DETAILS</h1>
-            <h2 id="goal-title"></h2>
-            <p id="goal-description"></p>
-            <p>
-                Target Hours:
-                <span id="goal-target-hours"></span>
-                hours
-            </p>
-            <p>
-                Deadline:
-                <span id="goal-target-date"></span>
-            </p>
-            <p>
-                Completed:
-                <span id="modal-completed-hours"></span> 
-                hours
-            </p>
-            <p>
-                Status:
-                <span id="goal-status"></span>
-            </p>
+        <div id="goal-modal" class="goal-modal">
+            <div class="goal-modal-container">
 
-            <label id="worked-today-label">Worked Today:</label>
-            <input
-                type="number"
-                id="goal-work-duration"
-                placeholder="minutes"
-            >
+                <h1 class="goal-modal-title" id="goal-title"></h1>
+                <p class="goal-modal-description" id="goal-description"></p>
+                <div class="goal-modal-details">
+                    <p>
+                        <label >Target Hours:
+                            <span id="goal-target-hours"></span>
+                            hours
+                        </label>
+                    </p>
 
-            <button id="extend-deadline" style="display:none;">
-                Extend Deadline
-            </button>
+                    <p>
+                        <label >Deadline:
+                            <span id="goal-target-date"></span>
+                        </label>
+                    </p>
 
-            
-            <input
-                type="date"
-                id="new-deadline"
-                style="display: none;"
-            >
-            <button id="save-extended-deadline" style="display:none;">
-                Save Extended Deadline
-            </button>
+                    <p>
+                        <label >Completed:
+                            <span id="modal-completed-hours"></span> 
+                            hours
+                        </label>
+                        
+                    </p>
 
-            <button type="button" id="save-goal-time">
-                SAVE
-            </button>
+                    <p>
+                        <label >Status:
+                            <span id="goal-status"></span>
+                        </label>
+                        
+                    </p>
 
-            <button id="close-modal">Close</button>
+                    
+                    
+                    <label id="worked-today-label">Worked Today:
+                        <input
+                        class="goal-work-duration-input"
+                        type="number"
+                        id="goal-work-duration"
+                        placeholder="minutes"
+                        >
+                    </label>
+
+                
+                    
+                    
+                    <label id="new-deadline-label">New Deadline:
+                        <input
+                        class="new-deadline-input"
+                        type="date"
+                        id="new-deadline"
+                        style="display: none;"
+                        >
+                    </label>
+
+                </div>
+
+
+                
+
+                <button id="extend-deadline" style="display:none;">
+                    Extend Deadline
+                </button>
+
+                
+                <button id="save-extended-deadline" style="display:none;">
+                    Save
+                </button>
+
+                <button type="button" id="save-goal-time">
+                    Save
+                </button>
+
+                <button id="close-modal">Close</button>
+
+            </div>
         </div>
 
     </section>
@@ -119,6 +148,8 @@
                 document.getElementById("worked-today-label").style.display = "none";
 
                 document.getElementById('extend-deadline').style.display = 'block';
+                document.getElementById('new-deadline-label').style.display = 'none';
+
             }
             else if (status === "ACTIVE") {
 
@@ -127,6 +158,7 @@
                 document.getElementById("worked-today-label").style.display = "block";
 
                 document.getElementById("extend-deadline").style.display = "none";
+                document.getElementById('new-deadline-label').style.display = 'none';
 
             }
             else {
@@ -135,6 +167,8 @@
                 document.getElementById("worked-today-label").style.display = "none";
 
                 document.getElementById('extend-deadline').style.display = 'none';
+                document.getElementById('new-deadline-label').style.display = 'none';
+
             }
 
         });
@@ -146,6 +180,7 @@
         document.getElementById('extend-deadline').style.display = 'none';
         document.getElementById('new-deadline').style.display = 'block';
         document.getElementById('save-extended-deadline').style.display = 'block';
+        document.getElementById('new-deadline-label').style.display = 'block';
 
     })
 
