@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div id="dashboard">
+
+    <p>Active Habits: {{ total_active_habits }}</p>
+    <p>Active Goals: {{ total_active_goals }}</p>
+    <p>Today's Activities (in hours): {{ today_hours }}</p>
+    <p>Overall Goal Progress: {{ progress_percentage|floatformat:2 }}%</p>
+
+</div>
+
+<div>
+
+    <h3>Habit Progress</h3>
+    <ul>
+        {% for habit in all_habits %}
+            <li>
+                <strong>{{ habit.title }}</strong> - {{ habit.status }}
+            </li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+
+{% for goal in active_goals %}
+
+    <div class="goal-progress-item">
+        <h3>Goal Progress</h3>
+        <p>{{ goal.title }}</p>
+
+        <div class="progress-bar">
+            <div
+                class="progress-fill";
+                style="width: {{ goal.progress }}%;"
+            ></div>
+        </div>
+
+        <span>{{ goal.progress|floatformat:0 }}%</span>
+
+    </div>
+
+{% endfor %}
+
+{% endblock %}
