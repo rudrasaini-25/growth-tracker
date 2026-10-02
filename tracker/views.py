@@ -2,8 +2,8 @@ import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .models import Habit, RecurringHabit, ActivityTimeCalculate, Goal
-from .forms import HabitForm, RecurringHabitForm, GoalForm
+from .models import Habit, RecurringHabit, ActivityTimeCalculate, Goal, Journal
+from .forms import HabitForm, RecurringHabitForm, GoalForm, JournalForm
 from django.utils import timezone
 from datetime import date
 from django.db.models import Q
@@ -541,3 +541,74 @@ def dashboard(request):
     }
     return render(request, "dashboard.html", context)
 
+# retrive
+def journal(request):
+
+    journals = Journal.objects.filter(
+        user=request.user,
+    )
+
+    context = {
+        'journals': journals,
+    }
+
+    return render(request, "journal.html", context)
+
+# create
+def add_journal(request):
+
+    if request.method == "POST":
+        form = JournalForm(request.POST)
+
+        if form.is_valid():
+            journal = form.save(commit=False)
+
+            journal.user = request.user
+            journal.created_by = request.user
+            journal.updated_by = request.user
+
+            journal.save()
+
+            return redirect("journal")
+
+    form = JournalForm()
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, "add_journal.html", context)
+
+def edit_journal(request, journal_id):
+
+    journal = Journal.objects.get(id=journal_id, user=request.user)
+
+    form = JournalForm(instance=journal)
+    if request.method == "POST":
+        form = JournalForm(request.POST, instance=journal)
+
+        if form.is_valid():
+            journal = form.save(commit=False)
+
+            journal.updated_by = request.user
+            journal.save()
+
+            return redirect("journal")
+
+
+    context = {
+        'form': form,
+    }
+
+    return render(request, "edit_journal.html", context)
+
+
+def delete_journal(request, journal_id):
+
+    journal = Journal.objects.get(id=journal_id, user=request.user)
+
+    if request.method == "POST":
+
+        journal.delete()
+
+        return redirect("journal")

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="journal-page">
+
+    <div class="journal-header">
+        <div>
+            <h1>My Journal</h1>
+            <p>Write down your thoughts, progress and experiences.</p>
+        </div>
+
+        <a href="{% url 'add_journal' %}" class="new-journal-btn">
+            + New Entry
+        </a>
+    </div>
+
+
+    <div class="journal-list">
+
+        {% for journal in journals %}
+
+        <div class="journal-card">
+
+            <div class="journal-card-header">
+                <div>
+                    <h2>{{ journal.title }}</h2>
+                    <span>{{ journal.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+
+            <p class="journal-content">
+                {{ journal.content }}
+            </p>
+
+            <div class="journal-actions">
+
+                <a href="{% url 'edit_journal' journal.id %}"
+                   class="edit-journal-btn">
+                    Edit
+                </a>
+
+                <form method="POST"
+                      action="{% url 'delete_journal' journal.id %}">
+                    {% csrf_token %}
+
+                    <button type="submit" class="delete-journal-btn">
+                        Delete
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty-journal">
+            <h2>No journal entries yet</h2>
+            <p>Start writing about your day.</p>
+
+            <a href="{% url 'add_journal' %}" class="new-journal-btn">
+                Create First Entry
+            </a>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

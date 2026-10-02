@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="journal-form-page">
+
+    <h1>Edit Journal Entry</h1>
+    <p>Update your journal entry.</p>
+
+    <form method="POST" class="journal-form">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div class="journal-form-actions">
+            <button type="submit" class="save-journal-btn">
+                Update Entry
+            </button>
+
+            <a href="{% url 'journal' %}" class="cancel-journal-btn">
+                Cancel
+            </a>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

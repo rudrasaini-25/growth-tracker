@@ -48,12 +48,12 @@ body {
     z-index: 1000; /* Keeps navbar floating securely on top of everything */
 }
 
-.nevbar {
+.navbar {
     border-radius: 10px;
     padding: 1rem 2rem;
 }
 
-.nevbar a {
+.navbar a {
     font-size: 1.8rem;
     color: white;
     margin: 0 5rem; /* Balanced horizontal spacing instead of left-only */
@@ -61,7 +61,7 @@ body {
     border-bottom: 3px solid transparent;
 }
 
-.nevbar a:hover {
+.navbar a:hover {
     border-bottom: 3px solid rgb(88, 22, 181);
     cursor: pointer;
 }
@@ -119,7 +119,7 @@ body {
     width: 100%;
     min-height: 100vh; /* Gives your list a full view screen height to display items */
     padding: 10rem 15% 4rem 15%; /* Generous top padding keeps content below fixed header */
-    background-color: rgba(27, 27, 27, 0.75); /* Dark layout overlay protection for tracking readability */
+    background-color: rgb(10, 10, 10, 0.75); /* Dark layout overlay protection for tracking readability */
 }
 
 @keyframes appear {
@@ -158,7 +158,8 @@ body {
     background-color: black;
     color: white;
     padding: 2rem;
-    font-size: 1.2rem;
+    font-size: 1rem;
+    opacity: 0.5;
 }
 
 
@@ -459,6 +460,65 @@ form label {
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* DASHBOARD */
+
+
+
+.dashboard-container{
+    width: 100%;
+    min-height: 100vh;
+    padding: 4rem 12% 5rem 12%;
+}
+
+.welcome{
+    font-size: small;
+    margin-right: 60%;
+    margin-top: 12%;
+}
+
+.smallstats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+    gap: 20px;
+    margin-top: 2%;
+    margin-bottom: 5%;
+}
+
+.smallstats p {
+    font-size: 1.5rem;
+    color: white;
+    background-color: rgb(10, 10, 10);
+    padding: 5rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgb(88, 22, 181);
+}
+
+.bigstats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 5%;
+}
+
+.habitstats {
+    font-size: 1.5rem;
+    color: white;
+    background-color: rgb(10, 10, 10);
+    padding: 7rem 7rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgb(88, 22, 181);
+}
+
+.goalstats {
+    font-size: 1.5rem;
+    color: white;
+    background-color: rgb(10, 10, 10);
+    padding: 7rem 7rem;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgb(88, 22, 181);
+}
+
 
 .progress-bar {
     width: 100%;
@@ -473,4 +533,185 @@ form label {
     width: 0;
     background-color: #4caf50;
     border-radius: 10px;
+}
+
+
+/* journal */
+
+.journal-page {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 100px;
+}
+
+.journal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.journal-header h1 {
+    font-size: 25px;
+    margin: 0;
+}
+
+.journal-header p {
+    font-size: medium;
+    margin-top: 5px;
+    color: #777;
+}
+
+.journal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.journal-card {
+    padding: 25px;
+    border-radius: 12px;
+    background: rgb(0, 0, 0);
+    box-shadow: 0 0 15px rgb(88, 22, 181);
+}
+
+.journal-card-header h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.journal-card-header span {
+    font-size: 14px;
+    color: #888;
+}
+
+.journal-content {
+    font-size: 15px;
+    margin: 20px 0;
+    line-height: 1.6;
+}
+
+/* journal edit delete buttons */
+
+.journal-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.journal-actions form {
+    margin: 0;
+}
+
+.edit-journal-btn,
+.delete-journal-btn,
+.new-journal-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.edit-journal-btn {
+    background:  rgb(88, 22, 181);
+    color: black;
+}
+
+.delete-journal-btn {
+    background:  rgb(88, 22, 181);
+    color: black;
+}
+
+.new-journal-btn {
+    background: rgb(88, 22, 181);
+    color: rgb(0, 0, 0);
+}
+
+.edit-journal-btn:hover,
+.delete-journal-btn:hover,
+.new-journal-btn:hover {
+    opacity: 0.8;
+}
+
+/* journal edit and add page */
+
+
+.journal-form-page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.journal-form-page h1 {
+    font-size: 25px;
+    margin-bottom: 5px;
+}
+
+.journal-form-page > p {
+    font-size: medium;
+    color: #777;
+    margin-bottom: 25px;
+}
+
+.journal-form {
+    margin-top: 40px;
+    background: rgb(0, 0, 0);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgb(88, 22, 181);
+    max-width: 100%;
+    gap: 20px;
+}
+
+.journal-form p {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.journal-form label {
+    font-weight: 500;
+}
+
+.journal-form input,
+.journal-form textarea {
+    padding: 10px;
+    border: 2px solid rgba(88, 22, 181, 0.4);
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+.journal-form textarea {
+    resize: vertical;
+}
+
+.journal-form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.save-journal-btn,
+.cancel-journal-btn {
+    padding: 9px 18px;
+    border-radius: 6px;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.save-journal-btn {
+    background: rgb(88, 22, 181);
+    color: rgb(0, 0, 0);
+}
+
+.cancel-journal-btn {
+    background: rgb(88, 22, 181);
+    color: rgb(0, 0, 0);
 }

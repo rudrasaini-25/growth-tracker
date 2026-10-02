@@ -1,5 +1,5 @@
 from django import forms
-from .models import Habit, RecurringHabit, Goal
+from .models import Habit, RecurringHabit, Goal, Journal
 
 class HabitForm(forms.ModelForm):
 
@@ -111,5 +111,26 @@ class GoalForm(forms.ModelForm):
             'target_hours' : forms.NumberInput(attrs={
                 'class':'form-input',
                 'placeholder':'Enter target hours'
+            })
+        }
+
+class JournalForm(forms.ModelForm):
+    class Meta:
+        model= Journal
+
+        fields = [
+            'title',
+            'content',
+        ]
+
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-input', 
+                'placeholder': 'Enter title'
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-textarea', 
+                'placeholder': 'journal content',
+                'rows':5
             })
         }

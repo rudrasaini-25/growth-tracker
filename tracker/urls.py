@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from .views import habits, add_habits, habits_activity, recurring_habits_activity, goals, add_goals, goal_activity, extend_deadline, dashboard
+from .views import habits, add_habits, habits_activity, recurring_habits_activity, goals, add_goals, goal_activity, extend_deadline, dashboard, journal, add_journal, edit_journal, delete_journal
 
 urlpatterns = [
     path('habits/', habits, name='habits'),
@@ -12,5 +12,8 @@ urlpatterns = [
     path('goal_activity/', goal_activity, name= 'goal_activity'),
     path('extend_deadline/', extend_deadline, name='extend_deadline'),
     path('dashboard/', dashboard, name='dashboard'),
-
+    path('journal/', journal, name='journal'),
+    path('journal/add/', add_journal, name='add_journal'),
+    path("journal/edit/<int:journal_id>/", edit_journal, name="edit_journal"),
+    path("journal/delete/<int:journal_id>/", delete_journal, name="delete_journal"),
 ]
