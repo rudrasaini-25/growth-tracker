@@ -58,10 +58,12 @@
         <div class="empty-journal">
             <h2>No journal entries yet</h2>
             <p>Start writing about your day.</p>
-
-            <a href="{% url 'add_journal' %}" class="new-journal-btn">
-                Create First Entry
-            </a>
+            <div class="empty-journal-actions">
+                <a href="{% url 'add_journal' %}" class="new-journal-btn">
+                    Create First Entry
+                </a>
+            </div>
+            
         </div>
 
         {% endfor %}

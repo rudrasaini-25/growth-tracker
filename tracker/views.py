@@ -1,3 +1,8 @@
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
+
 import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
@@ -9,6 +14,58 @@ from datetime import date
 from django.db.models import Q
 from datetime import datetime, timedelta
 
+
+
+def register(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if User.objects.filter(username=username).exists():
+            return render(request, "register.html", {
+                "error": "Username already exists."
+            })
+
+        if password != confirm_password:
+            return render(request, "register.html", {
+                "error": "Passwords do not match."
+            })
+
+        user = User.objects.create_user(
+            username=username,
+            password=password
+        )
+
+        login(request, user)
+
+        return redirect("dashboard")
+
+    return render(request, "register.html")
+
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is not None:
+            login(request, user)
+            return redirect("dashboard")
+
+        return render(request, "login.html", {
+            "error": "Invalid username or password."
+        })
+
+    return render(request, "login.html")
+
+@login_required
 def habits(request):
 
     today = timezone.localdate()
@@ -76,6 +133,7 @@ def habits(request):
     
     return render(request, "habit.html", context)
 
+@login_required
 def add_habits(request):
     if request.method == "POST":
         form_type = request.POST.get("form_type")
@@ -120,6 +178,7 @@ def add_habits(request):
                     {'habit_form': habit_form,'recurring_habit_form': recurring_habit_form,})
 
 @require_POST
+@login_required
 def habits_activity(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Authentication required.'}, status=403)
@@ -166,6 +225,7 @@ def habits_activity(request):
 
 
 @require_POST
+@login_required
 def recurring_habits_activity(request):
 
     if not request.user.is_authenticated:
@@ -214,7 +274,7 @@ def recurring_habits_activity(request):
 
 # ---------------------------------------------------------------------------
 
-
+@login_required
 def goals(request):
 
     today = timezone.localdate()
@@ -256,6 +316,7 @@ def goals(request):
         context
     )
 
+@login_required
 def add_goals(request):
     if request.method == "POST":
         form_type = request.POST.get("form_type")
@@ -284,6 +345,7 @@ def add_goals(request):
                 
 
 @require_POST
+@login_required
 def goal_activity(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Authentication required.'}, status=403)
@@ -340,6 +402,7 @@ def goal_activity(request):
 
 
 @require_POST
+@login_required
 def extend_deadline(request):
 
     if not request.user.is_authenticated: 
@@ -382,7 +445,7 @@ def extend_deadline(request):
     return JsonResponse({'success': True, 'status': goal.status, 'new_target_date': goal.target_date})
 
 
-
+@login_required
 def dashboard(request):
 
     today = timezone.localdate()
@@ -439,6 +502,33 @@ def dashboard(request):
     
         else:
             goal.status = "EXPIRED"
+
+    total_completed_hours = 0
+    total_target_hours = 0
+
+    for goal in goals:
+        activities = ActivityTimeCalculate.objects.filter(
+            user=request.user,
+            goal=goal
+        )
+
+        total_minutes = 0
+
+        for activity in activities:
+            total_minutes += activity.work_duration
+
+        completed_hours = total_minutes / 60
+
+        total_completed_hours += completed_hours
+        total_target_hours += goal.target_hours
+
+    if total_target_hours > 0:
+        progress_percentage = (
+            total_completed_hours / total_target_hours
+        ) * 100
+    else:
+        progress_percentage = 0
+        
 
 # for todays activity in hours
     today_start = timezone.make_aware(
@@ -542,6 +632,7 @@ def dashboard(request):
     return render(request, "dashboard.html", context)
 
 # retrive
+@login_required
 def journal(request):
 
     journals = Journal.objects.filter(
@@ -555,6 +646,7 @@ def journal(request):
     return render(request, "journal.html", context)
 
 # create
+@login_required
 def add_journal(request):
 
     if request.method == "POST":
@@ -579,6 +671,7 @@ def add_journal(request):
 
     return render(request, "add_journal.html", context)
 
+@login_required
 def edit_journal(request, journal_id):
 
     journal = Journal.objects.get(id=journal_id, user=request.user)
@@ -603,6 +696,7 @@ def edit_journal(request, journal_id):
     return render(request, "edit_journal.html", context)
 
 
+@login_required
 def delete_journal(request, journal_id):
 
     journal = Journal.objects.get(id=journal_id, user=request.user)
@@ -612,3 +706,45 @@ def delete_journal(request, journal_id):
         journal.delete()
 
         return redirect("journal")
+
+
+
+@login_required
+def delete_habit(request, habit_id):
+
+    habit = Habit.objects.get(id=habit_id, user=request.user)
+
+    if request.method == "POST":
+
+        habit.delete()
+
+        return redirect("habits")
+
+@login_required
+def delete_recurring_habit(request, recurring_habit_id):
+
+    recurring_habit = RecurringHabit.objects.get(id=recurring_habit_id, user=request.user)
+
+    if request.method == "POST":
+
+        recurring_habit.delete()
+
+        return redirect("habits")
+    
+@login_required
+def delete_goal(request, goal_id):
+
+    goal = Goal.objects.get(id=goal_id, user=request.user)
+
+    if request.method == "POST":
+
+        goal.delete()
+
+        return redirect("goals")    
+
+
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect("login")

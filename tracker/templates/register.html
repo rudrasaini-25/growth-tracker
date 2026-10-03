@@ -1,0 +1,48 @@
+{% extends 'auth_base.html' %}
+
+{% block content %}
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <h1>Create Account</h1>
+        <p>Create your GrowthTrack account.</p>
+
+        {% if error %}
+            <p class="auth-error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="auth-field">
+                <label>Username</label>
+                <input type="text" name="username" required>
+            </div>
+
+            <div class="auth-field">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <div class="auth-field">
+                <label>Confirm Password</label>
+                <input type="password" name="confirm_password" required>
+            </div>
+
+            <button type="submit" class="auth-button">
+                Create Account
+            </button>
+        </form>
+
+        <p class="auth-link">
+            Already have an account?
+            <a href="{% url 'login' %}">Login</a>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -10,9 +10,11 @@
 
     <section class="display-habits-container">
 
-        <div >
+        <div class="habit-and-delete">
             {% for habit in habits %}
             <div class="display-habits {% if habit.checked_today %}completed{% endif %}">
+
+
                 <div class="habit-time-checkbox-container">
 
                     <div class="habit-display-container">
@@ -37,10 +39,27 @@
                         >
                     </div>    
 
+                    <form method="POST"
+                        action="{% url 'delete_habit' habit.id %}"
+                        class="delete-form">
+                        {% csrf_token %}
+
+                        <button type="submit"
+                                class="delete-icon"
+                                onclick="return confirm('Are you sure you want to delete this habit?');"
+                                title="Delete habit">
+
+                            <i class="fa-solid fa-trash-can"></i>
+
+                        </button>
+                    </form>
+
                     
                 </div>
             
             </div>
+
+
             {% empty %}
                 <p>No habits yet.</p>
             {% endfor %}
@@ -49,32 +68,52 @@
 
         <div >
             {% for recurringhabit in recurringhabits %}
-            <div class="display-habits {% if recurringhabit.checked_today %}completed{% endif %}">
+            <div class="habit-and-delete">
 
-                <div class="habit-time-checkbox-container">
+                <div class="display-habits {% if recurringhabit.checked_today %}completed{% endif %}">
 
-                    <div class="habit-display-container">
-                        <p style="font-weight: bold; margin-bottom: 2%;">{{ recurringhabit.title }}</p>
-                        <p>{{ recurringhabit.description }}</p>
+                    <div class="habit-time-checkbox-container">
+
+                        <div class="habit-display-container">
+                            <p style="font-weight: bold; margin-bottom: 2%;">{{ recurringhabit.title }}</p>
+                            <p>{{ recurringhabit.description }}</p>
+                        </div>
+                        <div class="time-checkbox-container">
+                            <input
+                                type="checkbox"
+                                class="recurring-habit-checkbox"
+                                id="recurring-habit-{{ recurringhabit.id }}"
+                                data-id="{{ recurringhabit.id }}"
+                                {% if recurringhabit.checked_today %}checked disabled{% endif %}
+                            >
+                            <input type="number"
+                                class="recurring-habit-time"
+                                name="recurring-habit-time" 
+                                id="recurring-habit-time-{{ recurringhabit.id }}"
+                                data-id="{{ recurringhabit.id }}"
+                                style="display:none; width: 80px; margin-left: 8px;"
+                                placeholder="minutes"
+                            >
+                        </div>   
+                        
+                        <form method="POST"
+                            action="{% url 'delete_recurring_habit' recurringhabit.id %}"
+                            class="delete-form">
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="delete-icon"
+                                    onclick="return confirm('Are you sure you want to delete this habit?');"
+                                    title="Delete habit">
+
+                                <i class="fa-solid fa-trash-can"></i>
+
+                            </button>
+                        </form>
                     </div>
-                    <div class="time-checkbox-container">
-                        <input
-                            type="checkbox"
-                            class="recurring-habit-checkbox"
-                            id="recurring-habit-{{ recurringhabit.id }}"
-                            data-id="{{ recurringhabit.id }}"
-                            {% if recurringhabit.checked_today %}checked disabled{% endif %}
-                        >
-                        <input type="number"
-                            class="recurring-habit-time"
-                            name="recurring-habit-time" 
-                            id="recurring-habit-time-{{ recurringhabit.id }}"
-                            data-id="{{ recurringhabit.id }}"
-                            style="display:none; width: 80px; margin-left: 8px;"
-                            placeholder="minutes"
-                        >
-                    </div>    
+
                 </div>
+
 
             </div>
             

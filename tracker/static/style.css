@@ -229,6 +229,7 @@ body {
     justify-content: center;
     margin-top: 10%;
 }
+
 form {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -239,6 +240,7 @@ form {
     width: 100%;
     max-width: 80%;
 }
+
 form p {
     display: flex;
     flex-direction: column;
@@ -382,7 +384,7 @@ form label {
 .goal-modal-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    /* gap: 20px; */
+    gap: 7px;
     background-color:rgb(0, 0, 0);
     margin: 15% auto;
     padding: 20px;
@@ -586,6 +588,7 @@ form label {
 }
 
 .journal-content {
+    
     font-size: 15px;
     margin: 20px 0;
     line-height: 1.6;
@@ -634,6 +637,19 @@ form label {
 .delete-journal-btn:hover,
 .new-journal-btn:hover {
     opacity: 0.8;
+}
+
+.empty-journal {
+    display: contents;
+    font-size: 16px;
+    color: #555;
+    text-align: center;
+    margin-top: 50px;
+}
+.empty-journal-action {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 /* journal edit and add page */
@@ -714,4 +730,153 @@ form label {
 .cancel-journal-btn {
     background: rgb(88, 22, 181);
     color: rgb(0, 0, 0);
+}
+
+/* register page */
+
+
+.auth-card form {
+
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.auth-page {
+    margin-top: 40px;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.auth-field label {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.auth-card {
+    width: 400px;
+    padding: 30px;
+    background: rgb(0, 0, 0);
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgb(88, 22, 181);
+}
+
+.auth-card h1 {
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+}
+
+.auth-card > p {
+    color: #777;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+    gap: 6px;
+}
+
+.auth-field input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.auth-button {
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: 6px;
+    background: rgb(88, 22, 181);
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.auth-error {
+    color: #c62828 ;
+}
+
+.auth-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.auth-link a {
+    color: rgb(88, 22, 181);
+}
+
+/* Main habit list */
+/* .display-habits-container {
+    display: block !important;
+    width: 100%;
+} */
+
+/* Each section inside the habit container */
+/* .display-habits-container > div {
+    display: block;
+    width: 100%;
+} */
+
+/* Habit rectangle + delete icon */
+/* .habit-and-delete {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 15px;
+} */
+
+/* Habit rectangle */
+/* .habit-and-delete .display-habits {
+    flex: 1;
+    width: auto;
+} */
+
+/* Delete form */
+.habit-and-delete .delete-form {
+    display: flex;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+/* Delete icon */
+.delete-icon {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color:  rgb(85, 58, 123);
+    font-size: 15px;
+}
+
+.delete-icon:hover {
+    color: red;
+}
+
+.goal-modal-container .delete-goal-form {
+    display: flex;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+.logout {
+    position: absolute;
+    right: 4%;
+    font-size: medium;
+    font-weight: 600;
 }

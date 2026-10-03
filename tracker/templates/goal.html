@@ -76,8 +76,6 @@
                         >
                     </label>
 
-                
-                    
                     
                     <label id="new-deadline-label">New Deadline:
                         <input
@@ -91,7 +89,19 @@
                 </div>
 
 
-                
+
+                <form method="POST" id="delete-goal-form" class="delete-goal-form">
+                    {% csrf_token %}
+                    <button
+                        type="submit"
+                        class="delete-goal-btn"
+                        onclick="return confirm('Are you sure you want to delete this goal?');">
+                        Delete
+                    </button>
+                    <!-- <button type="submit" class="delete-goal-btn">
+                        Delete
+                    </button> -->
+                </form>
 
                 <button id="extend-deadline" style="display:none;">
                     Extend Deadline
@@ -129,6 +139,10 @@
 
             const modal = document.getElementById("goal-modal");
             modal.dataset.goalId = goalId;
+
+            const deleteForm = document.getElementById("delete-goal-form");
+
+            deleteForm.action = `/tracker/goals/delete/${goalId}/`;
 
             const status = this.dataset.status;
 

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>growth tracker</title>
     <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
     
@@ -20,6 +21,13 @@
                     <a onclick = "window.location.href='/tracker/goals/'">Goal</a>
                     <a onclick = "window.location.href='/tracker/journal/'">Journal</a>
                 </nav>
+
+                {% if user.is_authenticated %}
+                    <div class = "logout">
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </div>
+                    
+                {% endif %}
             </div>
         </header>
         
