@@ -133,49 +133,48 @@ def habits(request):
     
     return render(request, "habit.html", context)
 
+
 @login_required
 def add_habits(request):
+    habit_form = HabitForm()
+    recurring_habit_form = RecurringHabitForm()
+
     if request.method == "POST":
         form_type = request.POST.get("form_type")
 
         if form_type == "habit":
-
             habit_form = HabitForm(request.POST)
 
             if habit_form.is_valid():
                 habit = habit_form.save(commit=False)
-
                 habit.user = request.user
                 habit.created_by = request.user
                 habit.updated_by = request.user
-
                 habit.save()
 
                 return redirect("habits")
 
         elif form_type == "recurring":
-
             recurring_habit_form = RecurringHabitForm(request.POST)
 
             if recurring_habit_form.is_valid():
-
                 recurring = recurring_habit_form.save(commit=False)
-
                 recurring.user = request.user
                 recurring.created_by = request.user
                 recurring.updated_by = request.user
-
                 recurring.save()
 
                 return redirect("habits")
-    else:
 
-        habit_form = HabitForm()
-        recurring_habit_form = RecurringHabitForm()
+    return render(
+        request,
+        "add_habit.html",
+        {
+            "habit_form": habit_form,
+            "recurring_habit_form": recurring_habit_form,
+        },
+    )
 
-
-    return render (request, "add_habit.html",
-                    {'habit_form': habit_form,'recurring_habit_form': recurring_habit_form,})
 
 @require_POST
 @login_required
